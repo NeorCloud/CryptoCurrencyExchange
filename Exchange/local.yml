@@ -1,0 +1,51 @@
+version: '3'
+
+volumes:
+  exchange_postgres_data: {}
+  exchange_postgres_data_backups: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: exchange_django
+    container_name: exchange_django
+    depends_on:
+      - postgres
+      - redis
+    # volumes:
+    #   - .:/app:z
+    env_file:
+      - ./.envs
+    ports:
+      - "8000:8000"
+    networks:
+      - exchange_network
+
+  migrations:
+    <<: *django
+    container_name: exchange_migrations
+    command: python manage.py migrate --noinput
+    ports: []
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: exchange_postgres
+    volumes:
+      - exchange_postgres_data:/var/lib/postgresql/data
+      - exchange_postgres_data_backups:/backups
+    env_file:
+      - ./.envs.postgres
+    networks:
+      - exchange_network
+
+  redis:
+    image: redis:6
+    container_name: exchange_redis
+    networks:
+      - exchange_network
+
+networks:
+  exchange_network:
+    driver: bridge
