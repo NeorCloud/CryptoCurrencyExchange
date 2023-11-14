@@ -1,0 +1,12 @@
+django < 4.2
+djangorestframework
+django-extensions
+django-q
+psycopg2-binary
+pillow
+bitcoin
+eth-account
+plotly
+django-credit-cards
+gunicorn
+whitenoise[brotli]
