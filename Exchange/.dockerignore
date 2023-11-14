@@ -1,0 +1,22 @@
+# Ignore these files and directories
+.git
+node_modules
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.pyz
+*.pyzw
+*.sqlite3
+*.db
+*.log
+*.bak
+*.swp
+*.swo
+*.DS_Store
+
+# Docker
+Dockerfile
+docker-compose.yml
+local.yml
+.envs*
