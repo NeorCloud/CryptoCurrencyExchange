@@ -132,3 +132,5 @@ dmypy.json
 Exchange/media/profile_pics/
 
 .idea/
+
+.envs*
