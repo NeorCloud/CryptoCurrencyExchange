@@ -8,12 +8,23 @@ on:
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.10"]
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
     - uses: actions/checkout@v3
@@ -31,6 +42,12 @@ jobs:
       run: |
         cd Exchange
         python manage.py test
+      env:
+        DATABASE_NAME: testdb
+        DATABASE_USER: postgres
+        DATABASE_PASSWORD: postgres
+        DATABASE_HOST: postgres
+        DATABASE_PORT: 5432
 
   build:
     runs-on: ubuntu-latest
