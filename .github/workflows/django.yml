@@ -67,7 +67,7 @@ jobs:
             -e DJANGO_SECRET_KEY=secret \
             -e DJANGO_DEBUG=True \
             -e DJANGO_ALLOWED_HOSTS=localhost \
-            backend/panel:latest \
+            ${{ vars.DOCKER_REGISTRY }}/backend/panel:latest \
             python manage.py test
 
   push:
