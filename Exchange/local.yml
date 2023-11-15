@@ -29,6 +29,12 @@ services:
     command: python manage.py migrate --noinput
     ports: []
 
+  test:
+    <<: *django
+    container_name: exchange_django_test
+    command: python manage.py test
+    ports: []
+
   postgres:
     image: postgres:16-alpine
     container_name: exchange_postgres
