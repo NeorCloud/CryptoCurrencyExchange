@@ -30,6 +30,4 @@ jobs:
         context: Exchange
         push: true
         # List of tags
-        tags: "latest,${{ github.ref_name }}-latest,${{ github.ref_name }}-${{ github.sha }}"
-              
-        
+        tags: "backend/panel:latest,backend/panel:${{ github.ref_name }}-latest,backend/panel:${{ github.ref_name }}-${{ github.sha }}"
