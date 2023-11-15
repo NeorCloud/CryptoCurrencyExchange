@@ -29,6 +29,7 @@ jobs:
       with:
         name: backend-panel
         path: /tmp/backend-panel.tar
+        retention-days: 1
 
   test:
     runs-on: ubuntu-latest
