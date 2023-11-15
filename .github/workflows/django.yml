@@ -49,7 +49,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: backend-panel
-          path: /tmp/backend-panel.tar
+          path: /tmp
       - name: Load Docker image
         run: docker load -i /tmp/backend-panel.tar
       - name: Run tests
@@ -74,7 +74,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: backend-panel
-          path: /tmp/backend-panel.tar
+          path: /tmp
       - name: Load Docker image
         run: docker load -i /tmp/backend-panel.tar
       - name: Docker Login
