@@ -83,8 +83,7 @@ jobs:
       - name: Load Docker image
         run: docker load -i /tmp/backend-panel.tar
       - name: Push to the registry
-        uses: docker/build-push-action@v5.0.0
-        with:
-          context: Exchange
-          push: true
-          tags: ${{ env.DOCKER_IMAGE_TAGS }}
+        run: |
+          docker push ${{ vars.DOCKER_REGISTRY }}/backend/panel:latest
+          docker push ${{ vars.DOCKER_REGISTRY }}/backend/panel:${{ github.ref_name }}-latest
+          docker push ${{ vars.DOCKER_REGISTRY }}/backend/panel:${{ github.ref_name }}-${{ github.sha }}
