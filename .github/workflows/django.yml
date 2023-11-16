@@ -122,7 +122,8 @@ jobs:
         env:
           ARGOCD_SERVER: ${{ vars.argocd_server }}
         run: |
-          curl -sSL -o argocd https://${ARGOCD_SERVER}/download/argocd-linux-amd64
+          curl -sSL -o /usr/local/bin/argocd https://${ARGOCD_SERVER}/download/argocd-linux-amd64
+          chmod +x /usr/local/bin/argocd
       - name: Sync application
         env:
           ARGOCD_SERVER: ${{ vars.argocd_server }}
