@@ -113,14 +113,7 @@ jobs:
             sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
             sudo chmod a+x /usr/local/bin/yq
           fi
-      - name: Cache ArgocdCLI
-        id: cache-argocd-cli
-        uses: actions/cache@v3
-        with:
-          path: /usr/local/bin/argocd
-          key: ${{ vars.argocd_server }}-argocd
       - name: Install argocd
-        if: steps.cache-argocd-cli.outputs.cache-hit != 'true'
         env:
           ARGOCD_SERVER: ${{ vars.argocd_server }}
         run: |
