@@ -142,12 +142,12 @@ jobs:
           ARGOCD_SERVER: ${{ vars.argocd_server }}
           ARGOCD_AUTH_TOKEN: ${{ secrets.argocd_auth_token }}
         run: |
-          argocd app sync ${{ vars.argocd_app_name }} --async
+          argocd app sync ${{ vars.argocd_app_name }} --async --grpc-web
       - name: Output application url
         env:
           ARGOCD_SERVER: ${{ vars.argocd_server }}
           ARGOCD_AUTH_TOKEN: ${{ secrets.argocd_auth_token }}
         id: deploy
         run: |
-          url=$(argocd app get ${{ vars.argocd_app_name }} -o yaml | yq '.status.summary.externalURLs.0')
+          url=$(argocd app get ${{ vars.argocd_app_name }} -o yaml --grpc-web | yq '.status.summary.externalURLs.0')
           echo ::set-output name=webapp-url::${url}
