@@ -130,7 +130,7 @@ jobs:
           ARGOCD_AUTH_TOKEN: ${{ secrets.argocd_auth_token }}
         run: |
           argocd app sync ${{ vars.argocd_app_name }}
-          argocd app wait ${{ vars.argocd_app_name }}
+          argocd app wait ${{ vars.argocd_app_name }} --operation --timeout 900
       - name: Output application url
         env:
           ARGOCD_SERVER: ${{ vars.argocd_server }}
