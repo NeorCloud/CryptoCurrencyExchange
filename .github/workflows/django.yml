@@ -87,3 +87,52 @@ jobs:
           docker push ${{ vars.DOCKER_REGISTRY }}/backend/panel:latest
           docker push ${{ vars.DOCKER_REGISTRY }}/backend/panel:${{ github.ref_name }}-latest
           docker push ${{ vars.DOCKER_REGISTRY }}/backend/panel:${{ github.ref_name }}-${{ github.sha }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: push
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.webapp-url }}  
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: ${{ vars.manifests_repository }}
+      - name: Install yq if needed
+        run: |
+          if ! command -v yq &> /dev/null
+          then
+            sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+            sudo chmod a+x /usr/local/bin/yq
+          fi
+      - name: Update image in the manifests
+        run: |
+          yq '${{ vars.manifests_image_name_path }} = ${{ vars.DOCKER_REGISTRY }}/backend/panel' ${{ vars.manifests_values_path }}
+          yq '${{ vars.manifests_image_tag_path }} = ${{ github.ref_name }}-${{ github.sha }}' ${{ vars.manifests_values_path }}
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions@neor.pro"
+          git add ${{ vars.manifests_values_path }}
+          git commit -m "Update image to ${{ vars.DOCKER_REGISTRY }}/backend/panel:${{ github.ref_name }}-${{ github.sha }}" 
+          git push
+      - name: Install argocd
+        env:
+          ARGOCD_SERVER: ${{ vars.argocd_server }}
+        run: |
+          curl -sSL -o argocd https://${ARGOCD_SERVER}/download/argocd-linux-amd64
+      - name: Sync application
+        env:
+          ARGOCD_SERVER: ${{ vars.argocd_server }}
+          ARGOCD_AUTH_TOKEN: ${{ secrets.argocd_auth_token }}
+        run: |
+          argocd app sync ${{ vars.argocd_app_name }}
+          argocd app wait ${{ vars.argocd_app_name }}
+      - name: Output application url
+        env:
+          ARGOCD_SERVER: ${{ vars.argocd_server }}
+          ARGOCD_AUTH_TOKEN: ${{ secrets.argocd_auth_token }}
+        id: deploy
+        run: |
+          url=$(argocd app get ${{ vars.argocd_app_name }} -o json | jq '.status.summary.externalURLs[0]'
+          echo ::set-output name=webapp-url::${url}
