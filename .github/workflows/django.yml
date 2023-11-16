@@ -99,6 +99,7 @@ jobs:
         with:
           repository: ${{ vars.manifests_repository }}
           ref: ${{ vars.manifests_branch }}
+          token: ${{ secrets.manifests_repository_token }}
       - name: Install yq if needed
         run: |
           if ! command -v yq &> /dev/null
