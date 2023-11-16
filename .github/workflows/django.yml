@@ -113,6 +113,19 @@ jobs:
             sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
             sudo chmod a+x /usr/local/bin/yq
           fi
+      - name: Cache ArgocdCLI
+        id: cache-argocd-cli
+        uses: actions/cache@v3
+        with:
+          path: argocd
+          key: ${{ vars.argocd_server }}-argocd
+      - name: Install argocd
+        if: steps.cache-argocd-cli.outputs.cache-hit != 'true'
+        env:
+          ARGOCD_SERVER: ${{ vars.argocd_server }}
+        run: |
+          curl -sSL -o /usr/local/bin/argocd https://${ARGOCD_SERVER}/download/argocd-linux-amd64
+          chmod +x /usr/local/bin/argocd
       - name: Update image in the manifests
         run: |
           yq -i '${{ vars.manifests_image_name_path }} = "${{ vars.DOCKER_REGISTRY }}/backend/panel"' ${{ vars.manifests_values_path }}
@@ -124,12 +137,6 @@ jobs:
           git add ${{ vars.manifests_values_path }}
           git commit -m "Update image to ${{ vars.DOCKER_REGISTRY }}/backend/panel:${{ github.ref_name }}-${{ github.sha }}" 
           git push
-      - name: Install argocd
-        env:
-          ARGOCD_SERVER: ${{ vars.argocd_server }}
-        run: |
-          curl -sSL -o /usr/local/bin/argocd https://${ARGOCD_SERVER}/download/argocd-linux-amd64
-          chmod +x /usr/local/bin/argocd
       - name: Sync application
         env:
           ARGOCD_SERVER: ${{ vars.argocd_server }}
