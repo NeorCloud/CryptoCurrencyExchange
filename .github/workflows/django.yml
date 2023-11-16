@@ -109,8 +109,8 @@ jobs:
           fi
       - name: Update image in the manifests
         run: |
-          yq '${{ vars.manifests_image_name_path }} = ${{ vars.DOCKER_REGISTRY }}/backend/panel' ${{ vars.manifests_values_path }}
-          yq '${{ vars.manifests_image_tag_path }} = ${{ github.ref_name }}-${{ github.sha }}' ${{ vars.manifests_values_path }}
+          yq '${{ vars.manifests_image_name_path }} = "${{ vars.DOCKER_REGISTRY }}/backend/panel"' ${{ vars.manifests_values_path }}
+          yq '${{ vars.manifests_image_tag_path }} = "${{ github.ref_name }}-${{ github.sha }}"' ${{ vars.manifests_values_path }}
       - name: Commit and push changes
         run: |
           git config --global user.name "GitHub Actions"
