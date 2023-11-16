@@ -117,7 +117,7 @@ jobs:
         id: cache-argocd-cli
         uses: actions/cache@v3
         with:
-          path: argocd
+          path: /usr/local/bin/argocd
           key: ${{ vars.argocd_server }}-argocd
       - name: Install argocd
         if: steps.cache-argocd-cli.outputs.cache-hit != 'true'
